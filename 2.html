@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>موقع رابح أوتوماتيكي</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-family: 'Cairo', sans-serif; }
+    body { background: #f9f9f9; color: #333; line-height: 1.6; }
+
+    /* Layout */
+    header { background: #0066cc; color: #fff; padding: 1.5rem 1rem; text-align: center; }
+    header h1 { font-size: 2rem; font-weight: 600; }
+    #posts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; padding: 1rem; max-width: 1200px; margin: 1rem auto; }
+
+    /* Card Styles */
+    .post { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: transform .2s, box-shadow .2s; }
+    .post:hover { transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+    .post-content { padding: 1rem; }
+    .post-content h2 { font-size: 1.25rem; margin-bottom: 0.75rem; color: #004a99; }
+    .post-content p { font-size: 0.95rem; margin-bottom: 1rem; }
+
+    /* Buttons & Links */
+    .btn { display: inline-block; padding: 0.6rem 1rem; font-size: 0.95rem; font-weight: 500; text-decoration: none; border-radius: 6px; transition: background .2s; }
+    .btn-affiliate { background: #ffdd57; color: #333; margin-right: 0.5rem; }
+    .btn-affiliate:hover { background: #ffce00; }
+    .btn-read { background: #0066cc; color: #fff; }
+    .btn-read:hover { background: #005bb5; }
+
+    /* Footer */
+    footer { text-align: center; padding: 1rem; font-size: 0.9rem; color: #666; }
+
+    /* AdSense container */
+    .ad-container { margin: 1rem 0; text-align: center; }
+  </style>
+  <!-- Google AdSense -->
+  <script data-ad-client="ca-pub-XXXXXXXXXXXXXXX" async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body>
+  <header>
+    <h1>أحدث أخبار وأفكار في [نيتشك]</h1>
+  </header>
+  <main id="posts"></main>
+  <footer>جميع الحقوق محفوظة © 2025</footer>
+
+  <script>
+    const rssFeeds = [
+      'https://example.com/feed1.rss',
+      'https://example.com/feed2.rss',
+      'https://example.com/feed3.rss'
+    ];
+    const apiKey = 'API_KEY_FROM_RSS2JSON';
+
+    async function fetchPosts() {
+      const container = document.getElementById('posts');
+      for (let feed of rssFeeds) {
+        try {
+          let res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}&api_key=${apiKey}&count=3`);
+          let data = await res.json();
+          data.items.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'post';
+            card.innerHTML = `
+              <div class='post-content'>
+                <h2><a href='${item.link}' target='_blank'>${item.title}</a></h2>
+                <p>${item.description.replace(/(<([^>]+)>)/gi, '').substring(0, 140)}...</p>
+                <div>
+                  <a class='btn btn-affiliate' href='https://affiliate.example.com/?ref=YOUR_ID&url=${encodeURIComponent(item.link)}' target='_blank'>
+                    اقرأ المزيد وكسب
+                  </a>
+                  <a class='btn btn-read' href='${item.link}' target='_blank'>اقرأ المقالة</a>
+                </div>
+                <div class='ad-container'>
+                  <ins class='adsbygoogle'
+                       style='display:block'
+                       data-ad-client='ca-pub-XXXXXXXXXXXXXXX'
+                       data-ad-slot='YYYYYYYYYY'
+                       data-ad-format='auto'></ins>
+                  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        } catch (e) {
+          console.error('خطأ في جلب RSS:', e);
+        }
+      }
+    }
+    fetchPosts();
+  </script>
+</body>
+</html>
